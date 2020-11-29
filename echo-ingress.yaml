@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: echo-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: osfx-page
+          servicePort: 80
+      - path: /auth
+        backend:
+          serviceName: osfx-auth
+          servicePort: 5003
+      - path: /user
+        backend:
+          serviceName: osfx-user
+          servicePort: 5002
+      - path: /card
+        backend:
+          serviceName: osfx-data
+          servicePort: 5001
+      - path: /data
+        backend:
+          serviceName: osfx-card
+          servicePort: 5004
+      - path: /api
+        backend:
+          serviceName: osfx-json
+          servicePort: 5011
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tcp-services
+  namespace: ingress-nginx
+data:
+  5010: "default/osfx-tmc:5010"

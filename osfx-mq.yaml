@@ -1,0 +1,41 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: osfx-mq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: osfx-mq
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: osfx-mq
+    spec:
+      containers:
+      - image: rabbitmq
+        name: osfx-mq
+        resources: {}
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: osfx-mq
+  name: osfx-mq
+spec:
+  ports:
+  - name: 5672-5672-tcp
+    port: 5672
+    protocol: TCP
+    targetPort: 5672
+  - name: 15672-15672-management
+    port: 15672
+    protocol: TCP
+    targetPort: 15672
+  selector:
+    app: osfx-mq
+  type: ClusterIP
