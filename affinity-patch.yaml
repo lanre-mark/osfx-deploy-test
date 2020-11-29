@@ -1,7 +1,0 @@
-affinity:
-   podAntiAffinity:
-     requiredDuringSchedulingIgnoredDuringExecution:
-     - labelSelector:
-         matchLabels:
-           app: platform
-       topologyKey: "kubernetes.io/hostname"

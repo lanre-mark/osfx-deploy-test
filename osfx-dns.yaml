@@ -1,9 +1,0 @@
-rbac:
-  create: true
-provider: digitalocean
-digitalocean:
-  apiToken: doks-922e4c2a-4ecf-4400-ac60-a46e2501d579-20200114034849
-
-interval: "1m"
-policy: sync # or upsert-only
-# domainFilters: [ 'osfx.co' ]
