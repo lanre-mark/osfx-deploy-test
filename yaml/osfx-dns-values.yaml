@@ -1,0 +1,12 @@
+rbac:
+  create: true
+
+provider: digitalocean
+
+digitalocean:
+  apiToken: febbfa60e15f97ee696f71a635106a013fdc2b5c02f163b3ff294d3556280bd3
+
+interval: "1m"
+policy: sync # or upsert-only
+
+# domainFilters: [ 'osfx.co', 'osfx.tk' ]

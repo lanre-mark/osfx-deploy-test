@@ -1,0 +1,57 @@
+--- 
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata: 
+  name: osfx-hosts
+spec:
+  rules:
+    - host: osfx.cloud
+      http: 
+        paths: 
+          - backend: 
+              serviceName: osfx-page
+              servicePort: 80
+    - host: iso.osfx.cloud
+      http: 
+        paths: 
+          - backend: 
+              serviceName: osfx-tmc
+              servicePort: 5010
+    - host: json.osfx.cloud
+      http: 
+        paths: 
+          - backend: 
+              serviceName: osfx-json
+              servicePort: 5011
+    - host: auth.osfx.cloud
+      http: 
+        paths: 
+          - backend: 
+              serviceName: osfx-auth
+              servicePort: 5020
+    - host: user.osfx.cloud
+      http: 
+        paths: 
+          - backend: 
+              serviceName: osfx-user
+              servicePort: 5021
+    - host: data.osfx.cloud
+      http: 
+        paths: 
+          - backend: 
+              serviceName: osfx-data
+              servicePort: 5030
+    - host: card.osfx.cloud
+      http: 
+        paths: 
+          - backend: 
+              serviceName: osfx-card
+              servicePort: 5040
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tcp-services
+  namespace: ingress-nginx
+data:
+  5000: "default/osfx-tmc:5010"

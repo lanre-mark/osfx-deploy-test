@@ -1,0 +1,254 @@
+
+# ###############################################################################################
+# OSFX-SWITCH Service script
+#
+##################################################################################################
+# Data service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: osfx-data
+  labels:
+    app: osfx-data
+    service: osfx-data
+spec:
+  ports:
+  - port: 5000
+    name: http
+  selector:
+    app: osfx-data
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: osfx-data-v1
+  labels:
+    app: osfx-data
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: osfx-data
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: osfx-data
+        version: v1
+    spec:
+      serviceAccountName: data
+      containers:
+      - name: osfx-data
+        image: docker.io/istio/osfx-data-v1:1.15.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+---
+##################################################################################################
+# messaging service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: osfx-msg
+  labels:
+    app: osfx-msg
+    service: osfx-msg
+spec:
+  ports:
+  - port: 5000
+    name: http
+  selector:
+    app: osfx-msg
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: msgq
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: osfx-msg-v1
+  labels:
+    app: osfx-msg
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: osfx-msg
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: osfx-msg
+        version: v1
+    spec:
+      serviceAccountName: msgq
+      containers:
+      - name: osfx-msg
+        image: docker.io/istio/osfx-msg:1.15.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+---
+##################################################################################################
+# osfx-card service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: osfx-card
+  labels:
+    app: osfx-card
+    service: osfx-card
+spec:
+  ports:
+  - port: 5000
+    name: http
+  selector:
+    app: osfx-card
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: card
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: osfx-card-v1
+  labels:
+    app: osfx-card
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: osfx-card
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: osfx-card
+        version: v1
+    spec:
+      serviceAccountName: card
+      containers:
+      - name: osfx-card
+        image: docker.io/istio/osfx-card-v1:1.15.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: osfx-card-v2
+  labels:
+    app: osfx-card
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: osfx-card
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: osfx-card
+        version: v2
+    spec:
+      serviceAccountName: card
+      containers:
+      - name: osfx-card
+        image: docker.io/istio/osfx-card-v2:1.15.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: osfx-card-v3
+  labels:
+    app: osfx-card
+    version: v3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: osfx-card
+      version: v3
+  template:
+    metadata:
+      labels:
+        app: osfx-card
+        version: v3
+    spec:
+      serviceAccountName: card
+      containers:
+      - name: osfx-card
+        image: docker.io/istio/osfx-card-v3:1.15.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+---
+##################################################################################################
+# osfx-tmc services
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: osfx-tmc
+  labels:
+    app: osfx-tmc
+    service: osfx-tmc
+spec:
+  ports:
+  - port: 5000
+    name: http
+  selector:
+    app: osfx-tmc
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tmc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: osfx-tmc-v1
+  labels:
+    app: osfx-tmc
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: osfx-tmc
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: osfx-tmc
+        version: v1
+    spec:
+      serviceAccountName: tmc
+      containers:
+      - name: osfx-tmc
+        image: docker.io/istio/osfx-tmc-v1:1.15.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+---
