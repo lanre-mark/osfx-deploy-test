@@ -6,7 +6,7 @@ kubectl apply -f 1_osfx_loadbalancer.yaml
 kubectl apply -f 3_osfx_defaults.yaml
 
 kubectl create namespace cert-manager
-kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.12.0/cert-manager.yaml
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.1.0/cert-manager.yaml
 kubectl apply -f 8_osfx_issuer_live.yaml
 kubectl apply -f 9_osfx_ingress.yaml
 kubectl describe ingress
