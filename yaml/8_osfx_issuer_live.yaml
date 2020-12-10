@@ -14,9 +14,9 @@ spec:
       name: letsencrypt-prod
     # Enable the HTTP-01 challenge provider
     solvers:
-    - http01:
-        ingress:
-          class: nginx
+      - http01:
+          ingress:
+            class: nginx
 ---
 apiVersion: v1
 kind: Secret
@@ -38,19 +38,19 @@ spec:
         app: letsencrypt
     spec:
       containers:
-      # Bash script that starts an http server and launches certbot
-      # Fork of github.com/sjenning/kube-nginx-letsencrypt
-      - image: quay.io/hiphipjorge/kube-nginx-letsencrypt:latest
-        name: letsencrypt
-        imagePullPolicy: Always
-        ports:
-        - name: letsencrypt
-          containerPort: 80
-        env:
-        - name: DOMAINS
-          value: osfx.cloud
-        - name: EMAIL
-          value: mail.festus@gmail.com
-        - name: SECRET
-          value: osfx-certs
+        # Bash script that starts an http server and launches certbot
+        # Fork of github.com/sjenning/kube-nginx-letsencrypt
+        - image: quay.io/hiphipjorge/kube-nginx-letsencrypt:latest
+          name: letsencrypt
+          imagePullPolicy: Always
+          ports:
+            - name: letsencrypt
+              containerPort: 80
+          env:
+            - name: DOMAINS
+              value: osfx.cloud
+            - name: EMAIL
+              value: mail.festus@gmail.com
+            - name: SECRET
+              value: osfx-certs
       restartPolicy: Never
