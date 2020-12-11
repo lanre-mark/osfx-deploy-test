@@ -1,3 +1,8 @@
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
+chmod 700 get_helm.sh
+./get_helm.sh
+
 openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout osfx-key.pem -out osfx-cert.pem
 kubectl create secret tls osfx-cert --key osfx-key.pem --cert osfx-cert.pem
 
