@@ -1,0 +1,41 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: osfx-auto
+spec:
+  selector:
+    matchLabels:
+      app: osfx-auto
+  replicas: 2 
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: osfx-auto
+    spec:
+      terminationGracePeriodSeconds: 60
+      containers:
+      - name: osfx-auto
+        image: osfxdocks/osfx-auto:0.0.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5011
+          name: server
+        env:
+        - name: OSFX_MQ_ADDRESS 
+          valueFrom:
+            secretKeyRef:
+              name: osfx-auto-secret
+              key: mqaddress
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: osfx-auto
+spec:
+  ports:
+  - port: 5011
+    targetPort: 5011
+    name: tcp
+  selector:
+    app: osfx-auto
+  type: ClusterIP

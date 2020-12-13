@@ -1,0 +1,103 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: osfx-data
+spec:
+  selector:
+    matchLabels:
+      app: osfx-data
+  replicas: 2 
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: osfx-data
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: k8s-app
+                operator: In
+                values:  
+                - osfx-data
+            topologyKey: "kubernetes.io/hostname"
+      terminationGracePeriodSeconds: 60
+      containers:
+      - name: osfx-data
+        image: osfxdocks/osfx-data:0.3.5
+        imagePullPolicy: Always
+        readinessProbe:
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          failureThreshold: 5
+          httpGet:
+            path: /ping
+            port: 5030
+        livenessProbe:
+          initialDelaySeconds: 120
+          httpGet:
+            path: /health
+            port: 5030
+        ports:
+        - containerPort: 5030
+          name: server
+        env:                 
+        - name: OSFX_DATA_DATASOURCE_USER
+          valueFrom:          
+            secretKeyRef:
+              name: osfx-data-secret
+              key: username
+        - name: OSFX_DATA_DATASOURCE_PASS
+          valueFrom:
+            secretKeyRef:
+              name: osfx-data-secret
+              key: password
+        - name: OSFX_DATA_DATASOURCE_URL 
+          valueFrom:
+            secretKeyRef:
+              name: osfx-data-secret
+              key: dbconurl
+        - name: OSFX_AUTH_SERVICE_URL 
+          valueFrom:
+            secretKeyRef:
+              name: osfx-data-secret
+              key: oauthurl
+        - name: OSFX_MQ_ADDRESS 
+          valueFrom:
+            secretKeyRef:
+              name: osfx-data-secret
+              key: mqaddress
+        - name: OSFX_HSM_ADDRESS 
+          valueFrom:
+            secretKeyRef:
+              name: osfx-data-secret
+              key: hsmaddress
+        - name: OSFX_HSM_PORT 
+          valueFrom:
+            secretKeyRef:
+              name: osfx-data-secret
+              key: hsmport
+        - name: OSFX_HSM_VENDOR
+          valueFrom:
+            secretKeyRef:
+              name: osfx-data-secret
+              key: hsmvendor
+        - name: OSFX_HSM_HEADER
+          valueFrom:
+            secretKeyRef:
+              name: osfx-data-secret
+              key: hsmheader
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: osfx-data
+spec:
+  ports:
+  - port: 5030
+    targetPort: 5030
+    name: tcp
+  selector:
+    app: osfx-data
+  type: ClusterIP

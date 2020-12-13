@@ -1,0 +1,45 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: osfx-page
+spec:
+  type: ClusterIP
+  selector:
+    app: osfx-page
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: osfx-page
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: osfx-page
+  template:
+    metadata:
+      labels:
+        app: osfx-page
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: k8s-app
+                operator: In
+                values:  
+                - osfx-page
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: nginx
+        image: osfxdocks/osfx-page:0.2.3
+        ports:
+        - containerPort: 80
+          protocol: TCP
