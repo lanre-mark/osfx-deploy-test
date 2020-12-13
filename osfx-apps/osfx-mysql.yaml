@@ -1,92 +1,70 @@
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: PersistentVolume
 metadata:
-  name: mysql-pvc
+  name: mysql-pv-volume
+  labels:
+    type: local
 spec:
+  storageClassName: manual
+  capacity:
+    storage: 20Gi
   accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: do-block-storage
---- 
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: osfx-pvc
+  name: mysql-pv-claim
 spec:
+  storageClassName: manual
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
-  storageClassName: do-block-storage
+      storage: 20Gi
 ---
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: v1
+kind: Service
+metadata:
+  name: osfx-mysql
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+  clusterIP: None
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
 metadata:
   name: osfx-mysql
 spec:
   selector:
     matchLabels:
-      app: osfx-mysql
-  serviceName: "osfx-mysql"
-  replicas: 2
+      app: mysql
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
-        app: osfx-mysql
+        app: mysql
     spec:
-      terminationGracePeriodSeconds: 10
       containers:
-      - name: mysql
-        image: mysql:5.6
-        args:
-          - "--ignore-db-dir=lost+found"          
-        livenessProbe:
-          exec:
-            command: ["mysqladmin", "-uroot", "-p${MYSQL_ROOT_PASSWORD}", "ping"]
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
+      - image: mysql:5.6
+        name: mysql
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: R00t
         ports:
         - containerPort: 3306
           name: mysql
-        env:
-          - name: MYSQL_ROOT_PASSWORD
-            value: R00t
-          - name: DISCOVERY_SERVICE
-            value: etcd:2379
-          - name: XTRABACKUP_PASSWORD
-            value: R00t
-        ports:
-        - name: mysql-port
-          containerPort: 3306
-          protocol: TCP
         volumeMounts:
-          - name: mysql-storage
-            mountPath: /var/lib/mysql
-  volumeClaimTemplates:
-  - metadata:
-      name: mysql-storage
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 1Gi
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: osfx-msql
-  name: osfx-mysql
-spec:
-  ports:
-    - protocol: "TCP"
-      port: 3306
-      targetPort: 3306
-  selector:
-    app: osfx-mysql
-  clusterIP: "None"
-  type: ClusterIP
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
