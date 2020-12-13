@@ -2,10 +2,10 @@ step1:
 	sudo apt update
 	sudo apt -y upgrade && sudo systemctl reboot
 
-create-cluster: install-kube-tools configure-env install-runtime create-and-validate
+create-cluster:	install-kube-tools configure-env install-runtime create-and-validate
 
 install-kube-tools:
-    sudo apt -y install curl apt-transport-https
+    sudo apt install curl apt-transport-https
     curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
     echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
     sudo apt update
@@ -14,7 +14,7 @@ install-kube-tools:
     sudo apt-mark hold kubelet kubeadm kubectl
 	sudo apt install make make-guile
 
-configure-env: disable-swap configure-ctl
+configure-env:	disable-swap configure-ctl
 
 disable-swap:
     sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab

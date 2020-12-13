@@ -6,7 +6,7 @@ deploy-all: deploy-mq deploy-hsm deploy-db deploy-bank deploy-apps
 deploy-bank: deploy-finacle deploy-flexcube
 
 deploy-db: 
-	kubectl ${FLAGS} ${CONTEXT} apply ${FILE} osfx-db.yaml
+	kubectl ${FLAGS} ${CONTEXT} apply ${FILE} osfx-mysql.yaml
 
 deploy-hsm: 
 	kubectl ${FLAGS} ${CONTEXT} apply ${FILE} osfx-hsm.yaml
