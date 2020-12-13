@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: osfx-finacle
+spec:
+  ports:
+  - port: 4001
+    targetPort: 4001
+    name: tcp
+  selector:
+    app: osfx-finacle
+  type: ClusterIP
