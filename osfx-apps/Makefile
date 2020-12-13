@@ -55,14 +55,12 @@ data-secret:
 data-deploy:
 	kubectl ${FLAGS} ${CONTEXT} apply ${FILE} osfx-data-deploy.yaml
 
-deploy-card: card-secret card-deploy card-service
+deploy-card: card-secret card-deploy
 
 card-secret:
 	kubectl ${FLAGS} ${CONTEXT} apply ${FILE} osfx-card-secret.yaml
 card-deploy:
 	kubectl ${FLAGS} ${CONTEXT} apply ${FILE} osfx-card-deploy.yaml
-card-service:
-	kubectl ${FLAGS} ${CONTEXT} apply ${FILE} osfx-card-service.yaml
 
 deploy-auto: auto-secret auto-deploy
 
