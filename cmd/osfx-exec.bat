@@ -3,6 +3,9 @@ curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get
 chmod 700 get_helm.sh
 ./get_helm.sh
 
+kubectl apply -f pre_osfx.yaml
+sudo kubectl config set-context osfx --namespace=osfx --cluster=kubernetes --user=kubernetes-admin
+
 openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout osfx-key.pem -out osfx-cert.pem
 kubectl create secret tls osfx-cert --key osfx-key.pem --cert osfx-cert.pem
 

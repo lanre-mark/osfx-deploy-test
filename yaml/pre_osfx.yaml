@@ -1,0 +1,18 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: osfx
+  labels:
+    name: osfx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: osfx
+  labels:
+    name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx
