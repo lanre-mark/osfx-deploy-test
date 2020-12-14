@@ -17,7 +17,7 @@ deploy-mq:
 
 deploy-finacle: flexcube-secret finacle-deploy finacle-service
 
-deploy-flexcube: flexcube-secret finacle-deploy flexcube-service
+deploy-flexcube: flexcube-secret flexcube-deploy flexcube-service
 
 finacle-secret: 
 	kubectl ${FLAGS} ${CONTEXT} ${ACTION} ${FILE} osfx-finacle-secret.yaml

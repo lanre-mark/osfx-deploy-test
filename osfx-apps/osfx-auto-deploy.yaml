@@ -15,7 +15,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
       - name: osfx-auto
-        image: osfxdocks/osfx-auto:0.0.1
+        image: osfxdocks/osfx-auto:0.0.3
         imagePullPolicy: Always
         ports:
         - containerPort: 5011
