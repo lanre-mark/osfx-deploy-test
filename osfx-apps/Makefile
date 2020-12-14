@@ -2,6 +2,9 @@ FLAGS = --context
 CONTEXT = osfx
 FILE = -f
 ACTION = apply
+SECRET-YAML = -o yaml --dry-run=client > 
+SECRET-CMD=create secret generic -n osfx
+FIELD=--from-literal
 deploy-all: deploy-mq deploy-hsm deploy-db deploy-bank deploy-apps
 
 deploy-bank: deploy-finacle deploy-flexcube
@@ -88,3 +91,11 @@ msg-service:
 
 deploy-ui: 
 	kubectl ${FLAGS} ${CONTEXT} ${ACTION} ${FILE} osfx-ui-deploy.yaml
+
+create-secrets: create-user-secret
+
+create-user-secret:
+	kubectl ${SECRET-CMD} osfx-any-secret ${FIELD}=secretkey="$(openssl rand -base64 128)" ${FIELD}=host-url="http://nonese.ng" ${SECRET-YAML} osfx-any-secret.yaml
+
+create-auth-secret:
+	kubectl ${SECRET-CMD} osfx-auth-secrete ${FIELD}=username="osfx" ${FIELD}=password="osfx" ${FIELD}=database="" ${FIELD}=mqaddress="" ${FIELD}=dbconurl="" ${FIELD}=tokenkey="" ${SECRET-YAML} osfx-auth-secret.yaml
