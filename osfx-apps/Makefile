@@ -1,4 +1,4 @@
-FLAGS = --context
+FLAGS = -n
 CONTEXT = osfx
 FILE = -f
 ACTION = apply
