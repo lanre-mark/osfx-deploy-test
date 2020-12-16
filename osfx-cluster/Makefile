@@ -1,23 +1,25 @@
-DOCKER-REPO = https://download.docker.com/linux/ubuntu
-DAEMON-JSON='{"exec-opts": ["native.cgroupdriver=systemd"],"log-driver": "json-file","log-opts": {"max-size": "100m"	},"storage-driver": "overlay2"}'
-KUBE-CONFIG='net.bridge.bridge-nf-call-ip6tables = 1\nnet.bridge.bridge-nf-call-iptables = 1\nnet.ipv4.ip_forward = 1'
-CLUSTER-DNS=osfx-cluster.osfx.etz
+DOCKER_REPO = https://download.docker.com/linux/ubuntu
+DAEMON_JSON='{"exec-opts": ["native.cgroupdriver=systemd"],"log-driver": "json-file","log-opts": {"max-size": "100m"	},"storage-driver": "overlay2"}'
+KUBE_CONFIG='net.bridge.bridge-nf-call-ip6tables = 1\nnet.bridge.bridge-nf-call-iptables = 1\nnet.ipv4.ip_forward = 1'
+CLUSTER_DNS=osfx-cluster.osfx.etz
 #sudo netstat -tulpn | grep kubelet
 #sudo rm -r /var/lib/etcd
 step1:
 	sudo apt update
 	sudo apt -y upgrade && sudo systemctl reboot
 
+step2:
+	sudo apt install -y curl git make
+
 create-cluster:	install-kube-tools configure-env install-runtime create-and-validate
 
 install-kube-tools: install-helm
 	sudo apt install curl apt-transport-https
-    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-    echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+	curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+	echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 	sudo apt update
-	sudo apt -y install git curl wget kubelet kubeadm kubectl
+	sudo apt install -y wget kubelet kubeadm kubectl
 	sudo apt-mark hold kubelet kubeadm kubectl
-	sudo apt install make make-guile
 
 install-helm:
 	curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
@@ -37,27 +39,27 @@ configure-ctl:
 	sudo modprobe overlay
 	sudo modprobe br_netfilter
 
-	@echo ${KUBE-CONFIG} | sudo tee /etc/sysctl.d/kubernetes.conf
+	@echo ${KUBE_CONFIG} | sudo tee /etc/sysctl.d/kubernetes.conf
 	sudo sysctl --system
 
 install-runtime: install-docker 
 	#install-containerd
 
-install-docker: download-docker create-docker-dir create-daemon-json start-docker-service
+install-docker: download-docker create-docker-dir create-DAEMON_JSON start-docker-service
     # Add repo and Install packages
 download-docker:
 	sudo apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
-	curl -fsSL ${DOCKER-REPO}/gpg | sudo apt-key add -
-	sudo add-apt-repository "deb [arch=amd64] ${DOCKER-REPO} $$(lsb_release -cs) stable"
+	curl -fsSL ${DOCKER_REPO}/gpg | sudo apt-key add -
+	sudo add-apt-repository "deb [arch=amd64] ${DOCKER_REPO} $$(lsb_release -cs) stable"
 	sudo apt update
 	sudo apt install -y containerd.io docker-ce docker-ce-cli
 
 create-docker-dir:
 	sudo mkdir -p /etc/systemd/system/docker.service.d
 
-create-daemon-json:
+create-DAEMON_JSON:
 	# Create daemon json config file
-	@echo ${DAEMON-JSON} | sudo tee /etc/docker/daemon.json	
+	@echo ${DAEMON_JSON} | sudo tee /etc/docker/daemon.json	
 
 	# Start and enable Services
 start-docker-service:
@@ -74,7 +76,7 @@ load-modules:
 
 setup-ip:
 	# Set up required sysctl params
-	@echo ${KUBE-CONFIG} | sudo tee /etc/sysctl.d/kubernetes.conf
+	@echo ${KUBE_CONFIG} | sudo tee /etc/sysctl.d/kubernetes.conf
 	
 	# Reload sysctl
 	sudo sysctl --system
@@ -103,7 +105,7 @@ install-containerd: containerd-modules containerd-runtime containerd-ip containe
 	sudo modprobe br_netfilter
 
 	# Ensure sysctl params are set
-	@echo ${KUBE-CONFIG} | sudo tee /etc/sysctl.d/kubernetes.conf
+	@echo ${KUBE_CONFIG} | sudo tee /etc/sysctl.d/kubernetes.conf
 
 	# Reload configs
 	sudo sysctl --system
@@ -112,8 +114,8 @@ install-containerd: containerd-modules containerd-runtime containerd-ip containe
 
 
 	# Add Docker repo
-	curl -fsSL ${DOCKER-REPO}/gpg | sudo apt-key add -
-	sudo add-apt-repository "deb [arch=amd64] ${DOCKER-REPO} $$(lsb_release -cs) stable"
+	curl -fsSL ${DOCKER_REPO}/gpg | sudo apt-key add -
+	sudo add-apt-repository "deb [arch=amd64] ${DOCKER_REPO} $$(lsb_release -cs) stable"
 
 	# Install containerd
 	sudo apt update
@@ -139,7 +141,7 @@ install-kubeadmin:
 
 	#set_cluster_dns: in hosts
 	#sudo nano /etc/hosts
-	sudo kubeadm init --control-plane-endpoint=${CLUSTER-DNS}
+	sudo kubeadm init --control-plane-endpoint=${CLUSTER_DNS}
 configure-kube:
 	mkdir -p $$HOME/.kube
 	sudo cp -i /etc/kubernetes/admin.conf $$HOME/.kube/config
