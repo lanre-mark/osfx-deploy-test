@@ -4,7 +4,7 @@ apiVersion: v1
 metadata:
   name: osfx-page
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: osfx-page
   ports:

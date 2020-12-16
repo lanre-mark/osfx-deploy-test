@@ -8,7 +8,7 @@ create-cluster: install-tools spin-kubernetes
 	microk8s add-node
 	
 enable-loadbalancer:
-	microk8s enable ingress-
+	microk8s enable ingress
 	microk8s enable metallb
 
 create-master: install-multipass
