@@ -1,4 +1,4 @@
-apiVersion: apps/v1 
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: osfx-finacle
@@ -6,22 +6,22 @@ spec:
   selector:
     matchLabels:
       app: osfx-finacle
-  replicas: 2 
+  replicas: 2
   template: # create pods using pod definition in this template
     metadata:
       labels:
         app: osfx-finacle
     spec:
       containers:
-      - name: osfx-finacle
-        image: osfxdocks/osfx-finacle:0.0.2
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 4001
-          name: server
-        env:                 
-        - name: OSFX_HOST_PORT
-          valueFrom:          
-            secretKeyRef:
-              name: osfx-finacle-secret
-              key: port
+        - name: osfx-finacle
+          image: osfxdocks/osfx-finacle:0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4001
+              name: server
+          env:
+            - name: OSFX_HOST_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-finacle-secret
+                  key: port
