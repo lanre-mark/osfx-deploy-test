@@ -5,7 +5,9 @@ ACTION = apply
 SECRET-YAML = -o yaml --dry-run=client > 
 SECRET-CMD=create secret generic -n osfx
 FIELD=--from-literal
+
 deploy-all: deploy-mq deploy-hsm deploy-db deploy-bank deploy-apps
+	kubectl  ${FLAGS} ${CONTEXT} ${ACTION} ${FILE} osfx-domains.yaml
 
 deploy-bank: deploy-finacle deploy-flexcube
 

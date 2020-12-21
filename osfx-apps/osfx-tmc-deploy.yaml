@@ -1,4 +1,4 @@
-apiVersion: apps/v1 
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: osfx-tmc
@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: osfx-tmc
-  replicas: 2 
+  replicas: 1
   template: # create pods using pod definition in this template
     metadata:
       labels:
@@ -14,38 +14,38 @@ spec:
     spec:
       terminationGracePeriodSeconds: 60
       containers:
-      - name: osfx-tmc
-        image: osfxdocks/osfx-tmc:0.2.5
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 5010
-          name: iso
-        - containerPort: 5012
-          name: json
-        env:                 
-        - name: OSFX_AMQP_SERVER
-          valueFrom:          
-            secretKeyRef:
-              name: osfx-tmc-secret
-              key: amqpServer                    
-        - name: OSFX_AUTH_SERVER
-          value: http://osfx-auth:5020                       
-        - name: OSFX_AUTH_CLIENT
-          valueFrom:          
-            secretKeyRef:
-              name: osfx-tmc-secret
-              key: authClient                       
-        - name: OSFX_AUTH_SECRET
-          valueFrom:          
-            secretKeyRef:
-              name: osfx-tmc-secret
-              key: authSecret                
-        - name: OSFX_DATA_SERVER
-          value: http://osfx-data:5030               
-        - name: OSFX_FLEXCUBE_SERVER
-          value: osfx-flexcube                 
-        - name: OSFX_FINACLE_SERVER
-          value: osfx-finacle
+        - name: osfx-tmc
+          image: osfxdocks/osfx-tmc:0.2.5
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5010
+              name: iso
+            - containerPort: 5012
+              name: json
+          env:
+            - name: OSFX_AMQP_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-tmc-secret
+                  key: amqpServer
+            - name: OSFX_AUTH_SERVER
+              value: http://osfx-auth:5020
+            - name: OSFX_AUTH_CLIENT
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-tmc-secret
+                  key: authClient
+            - name: OSFX_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-tmc-secret
+                  key: authSecret
+            - name: OSFX_DATA_SERVER
+              value: http://osfx-data:5030
+            - name: OSFX_FLEXCUBE_SERVER
+              value: osfx-flexcube
+            - name: OSFX_FINACLE_SERVER
+              value: osfx-finacle
 ---
 apiVersion: v1
 kind: Service
@@ -53,14 +53,14 @@ metadata:
   name: osfx-tmc
 spec:
   ports:
-  - port: 5010
-    targetPort: 5010
-    protocol: TCP
-    name: tcp
-  - port: 5012
-    targetPort: 5012
-    protocol: TCP
-    name: mq
+    - port: 5010
+      targetPort: 5010
+      protocol: TCP
+      name: tcp
+    - port: 5012
+      targetPort: 5012
+      protocol: TCP
+      name: mq
   selector:
     app: osfx-tmc
   type: LoadBalancer

@@ -1,4 +1,4 @@
-apiVersion: apps/v1 
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: osfx-card
@@ -6,8 +6,8 @@ spec:
   selector:
     matchLabels:
       app: osfx-card
-  replicas: 2 
-  template: 
+  replicas: 1
+  template:
     metadata:
       labels:
         app: osfx-card
@@ -15,59 +15,56 @@ spec:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: k8s-app
-                operator: In
-                values:  
-                - osfx-card
-            topologyKey: "kubernetes.io/hostname"
+            - labelSelector:
+                matchExpressions:
+                  - key: k8s-app
+                    operator: In
+                    values:
+                      - osfx-card
+              topologyKey: 'kubernetes.io/hostname'
       terminationGracePeriodSeconds: 60
       containers:
-      - name: osfx-card
-        image: osfxdocks/osfx-card:0.2.8
-        imagePullPolicy: Always
-        readinessProbe:
-          initialDelaySeconds: 40
-          periodSeconds: 10
-          failureThreshold: 5
-          httpGet:
-            path: /ping
-            port: 5040
-        livenessProbe:
-          initialDelaySeconds: 80
-          httpGet:
-            path: /health
-            port: 5040
-        ports:
-        - containerPort: 5040
-          name: server
-        env:                 
-        - name: OSFX_CARD_DATASOURCE_USER
-          valueFrom:          
-            secretKeyRef:
-              name: osfx-card-secret
-              key: username
-        - name: OSFX_CARD_DATASOURCE_PASS
-          valueFrom:
-            secretKeyRef:
-              name: osfx-card-secret
-              key: password
-        - name: OSFX_CARD_DATASOURCE_URL 
-          valueFrom:
-            secretKeyRef:
-              name: osfx-card-secret
-              key: dbconurl
-        - name: OSFX_AUTH_SERVICE_URL 
-          valueFrom:
-            secretKeyRef:
-              name: osfx-card-secret
-              key: oauthurl
-        - name: OSFX_MQ_ADDRESS 
-          valueFrom:
-            secretKeyRef:
-              name: osfx-card-secret
-              key: mqaddress
+        - name: osfx-card
+          image: osfxdocks/osfx-card:0.3.5
+          imagePullPolicy: Always
+          readinessProbe:
+            initialDelaySeconds: 40
+            periodSeconds: 10
+            failureThreshold: 5
+            httpGet:
+              path: /ping
+              port: 5040
+          livenessProbe:
+            initialDelaySeconds: 80
+            httpGet:
+              path: /health
+              port: 5040
+          ports:
+            - containerPort: 5040
+              name: server
+          env:
+            - name: OSFX_CARD_DATASOURCE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-card-secret
+                  key: username
+            - name: OSFX_CARD_DATASOURCE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-card-secret
+                  key: password
+            - name: OSFX_CARD_DATASOURCE_URL
+              value: 'jdbc:mysql://osfx-mysql:3306/carddb?createDatabaseIfNotExist=true&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&serverTimezone=Africa%2FLagos'
+            - name: OSFX_AUTH_SERVICE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-card-secret
+                  key: oauthurl
+            - name: OSFX_MQ_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-card-secret
+                  key: mqaddress
 ---
 apiVersion: v1
 kind: Service
@@ -75,9 +72,9 @@ metadata:
   name: osfx-card
 spec:
   ports:
-  - port: 5040
-    targetPort: 5040
-    name: http
+    - port: 5040
+      targetPort: 5040
+      name: http
   selector:
     app: osfx-card
   type: ClusterIP

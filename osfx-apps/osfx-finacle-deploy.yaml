@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: osfx-finacle
-  replicas: 2
+  replicas: 1
   template: # create pods using pod definition in this template
     metadata:
       labels:
@@ -21,7 +21,4 @@ spec:
               name: server
           env:
             - name: OSFX_HOST_PORT
-              valueFrom:
-                secretKeyRef:
-                  name: osfx-finacle-secret
-                  key: port
+              value: '4001'

@@ -4,7 +4,7 @@ apiVersion: v1
 metadata:
   name: osfx-page
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: osfx-page
   ports:
@@ -18,7 +18,7 @@ kind: Deployment
 metadata:
   name: osfx-page
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: osfx-page
@@ -27,19 +27,21 @@ spec:
       labels:
         app: osfx-page
     spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: k8s-app
-                operator: In
-                values:  
-                - osfx-page
-            topologyKey: "kubernetes.io/hostname"
+            - labelSelector:
+                matchExpressions:
+                  - key: k8s-app
+                    operator: In
+                    values:
+                      - osfx-page
+              topologyKey: 'kubernetes.io/hostname'
       containers:
-      - name: nginx
-        image: osfxdocks/osfx-page:0.2.3
-        ports:
-        - containerPort: 80
-          protocol: TCP
+        - name: nginx
+          image: osfxdocks/osfx-page:0.2.4
+          ports:
+            - containerPort: 80
+              protocol: TCP

@@ -4,9 +4,9 @@ metadata:
   name: osfx-flexcube
 spec:
   ports:
-  - port: 4002
-    targetPort: 4002
-    name: tcp
+    - port: 4002
+      targetPort: 4002
+      name: tcp
   selector:
     app: osfx-flexcube
   type: ClusterIP

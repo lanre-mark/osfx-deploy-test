@@ -1,4 +1,4 @@
-apiVersion: apps/v1 
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: osfx-flexcube
@@ -6,22 +6,22 @@ spec:
   selector:
     matchLabels:
       app: osfx-flexcube
-  replicas: 2 
+  replicas: 1
   template: # create pods using pod definition in this template
     metadata:
       labels:
         app: osfx-flexcube
     spec:
       containers:
-      - name: osfx-flexcube
-        image: osfxdocks/osfx-flexcube:0.0.2
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 4002
-          name: server
-        env:                 
-        - name: OSFX_HOST_PORT
-          valueFrom:          
-            secretKeyRef:
-              name: osfx-flexcube-secret
-              key: port
+        - name: osfx-flexcube
+          image: osfxdocks/osfx-flexcube:0.0.2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4002
+              name: server
+          env:
+            - name: OSFX_HOST_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-flexcube-secret
+                  key: port

@@ -15,9 +15,9 @@ spec:
         app: osfx-hsm
     spec:
       containers:
-      - image: vmantek/thales-sim
-        name: osfx-hsm
-        resources: {}
+        - image: vmantek/thales-sim
+          name: osfx-hsm
+          resources: {}
 status: {}
 ---
 apiVersion: v1
@@ -28,14 +28,14 @@ metadata:
   name: osfx-hsm
 spec:
   ports:
-  - name: 9998-9998-tcp-listener
-    port: 9998
-    protocol: TCP
-    targetPort: 9998
-  - name: 9997-9997-console-listener
-    port: 9997
-    protocol: TCP
-    targetPort: 9997
+    - name: 9998-9998-tcp-listener
+      port: 9998
+      protocol: TCP
+      targetPort: 9998
+    - name: 9997-9997-console-listener
+      port: 9997
+      protocol: TCP
+      targetPort: 9997
   selector:
     app: osfx-hsm
   type: ClusterIP

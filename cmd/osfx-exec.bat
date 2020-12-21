@@ -26,7 +26,3 @@ kubectl apply -f 8_osfx_issuer_live.yaml
 kubectl apply -f 9_osfx_ingress.yaml
 kubectl describe ingress
 kubectl describe certificate
-
-
-
-

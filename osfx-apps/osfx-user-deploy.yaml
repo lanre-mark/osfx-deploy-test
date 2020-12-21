@@ -1,4 +1,4 @@
-apiVersion: apps/v1 
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: osfx-user
@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: osfx-user
-  replicas: 1 
+  replicas: 1
   template: # create pods using pod definition in this template
     metadata:
       labels:
@@ -14,60 +14,57 @@ spec:
     spec:
       terminationGracePeriodSeconds: 60
       containers:
-      - name: osfx-user
-        image: osfxdocks/osfx-user:0.2.9
-        imagePullPolicy: Always
-        readinessProbe:
-          initialDelaySeconds: 40
-          periodSeconds: 10
-          failureThreshold: 5
-          httpGet:
-            path: /ping
-            port: 5021
-        livenessProbe:
-          initialDelaySeconds: 80
-          httpGet:
-            path: /health
-            port: 5021
-        ports:
-        - containerPort: 5021
-          name: server
-        env:                 
-        - name: OSFX_USER_DATASOURCE_USER
-          valueFrom:          
-            secretKeyRef:
-              name: osfx-user-secret
-              key: username
-        - name: OSFX_USER_DATASOURCE_PASS
-          valueFrom:
-            secretKeyRef:
-              name: osfx-user-secret
-              key: password
-        - name: OSFX_USER_DATASOURCE_URL 
-          valueFrom:
-            secretKeyRef:
-              name: osfx-user-secret
-              key: dbconurl
-        - name: OSFX_AUTH_SERVER 
-          valueFrom:
-            secretKeyRef:
-              name: osfx-user-secret
-              key: oauthurl
-        - name: OSFX_AMQP_SERVER 
-          valueFrom:
-            secretKeyRef:
-              name: osfx-user-secret
-              key: mqaddress
----              
+        - name: osfx-user
+          image: osfxdocks/osfx-user:0.3.5
+          imagePullPolicy: Always
+          readinessProbe:
+            initialDelaySeconds: 40
+            periodSeconds: 10
+            failureThreshold: 5
+            httpGet:
+              path: /ping
+              port: 5021
+          livenessProbe:
+            initialDelaySeconds: 80
+            httpGet:
+              path: /health
+              port: 5021
+          ports:
+            - containerPort: 5021
+              name: server
+          env:
+            - name: OSFX_USER_DATASOURCE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-user-secret
+                  key: username
+            - name: OSFX_USER_DATASOURCE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-user-secret
+                  key: password
+            - name: OSFX_USER_DATASOURCE_URL
+              value: 'jdbc:mysql://osfx-mysql:3306/userdb?createDatabaseIfNotExist=true&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&serverTimezone=Africa%2FLagos'
+            - name: OSFX_AUTH_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-user-secret
+                  key: oauthurl
+            - name: OSFX_AMQP_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-user-secret
+                  key: mqaddress
+---
 apiVersion: v1
 kind: Service
 metadata:
   name: osfx-user
 spec:
   ports:
-  - port: 5021
-    targetPort: 5021
-    name: tcp
+    - port: 5021
+      targetPort: 5021
+      name: tcp
   selector:
     app: osfx-user
   type: ClusterIP

@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: osfx-auto
-  replicas: 2
+  replicas: 1
   template: # create pods using pod definition in this template
     metadata:
       labels:
@@ -15,7 +15,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
         - name: osfx-auto
-          image: osfxdocks/osfx-auto:0.0.4
+          image: osfxdocks/osfx-auto:0.0.5
           imagePullPolicy: Always
           ports:
             - containerPort: 5011
@@ -26,6 +26,14 @@ spec:
                 secretKeyRef:
                   name: osfx-auto-secret
                   key: mqaddress
+            - name: OSFX_AUTH_SERVER
+              value: http://osfx-auth:5020
+            - name: OSFX_AUTH_CLIENT
+              value: osfx-auto
+            - name: OSFX_AUTH_SECRET
+              value: 3Tr@nzact
+            - name: OSFX_DATA_SERVER
+              value: http://osfx-data:5030
 ---
 apiVersion: v1
 kind: Service
