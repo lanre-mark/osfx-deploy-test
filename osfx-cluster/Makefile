@@ -5,15 +5,16 @@ install-tools:
 	sudo apt install make
 
 create-cluster: install-tools spin-kubernetes
+	
+add-node: 
 	microk8s add-node
 	
-enable-loadbalancer:
-	microk8s enable ingress
-	microk8s enable metallb
-	microk8s enable dns
-	microk8s enable storage
+configure-network:
+	microk8s enable dns ingress istio storage metallb
 	microk8s enable dashboard
-	microk8s enable istio
+	kubectl create namespace osfx
+	kubectl create namespace ingress-nginx
+	kubectl apply -f osfx-ingress.yaml
 
 create-master: install-multipass
 	multipass launch -m 4Gb -n osfx-master
@@ -32,6 +33,7 @@ create-node-3:
 	multipass shell osfx-node-3
 
 spin-kubernetes:
-	sudo snap install microk8s --classic --channel=1.18/stable
+	sudo snap install microk8s --classic --channel=1.19/stable
 	sudo snap alias microk8s.kubectl kubectl
 	sudo usermod -a -G microk8s ubuntu && sudo chown -f -R ubuntu ~/.kube
+	exit
