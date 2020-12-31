@@ -20,7 +20,7 @@ configure-network:
 	kubectl apply -f osfx-ingress.yaml
 
 configure-dns:
-	sudo apt install jq
+	sudo snap install jq
 	bash dns-deploy.sh -t osfx-dns.yaml
 
 create-master: install-multipass

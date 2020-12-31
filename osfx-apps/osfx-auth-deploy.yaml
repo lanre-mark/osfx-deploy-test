@@ -1,4 +1,4 @@
-apiVersion: apps/v1 
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: osfx-auth
@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: osfx-auth
-  replicas: 2 
+  replicas: 2
   template: # create pods using pod definition in this template
     metadata:
       labels:
@@ -14,33 +14,33 @@ spec:
     spec:
       terminationGracePeriodSeconds: 60
       containers:
-      - name: osfx-auth
-        image: osfxdocks/osfx-auth:0.1.8
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 5020
-          name: server
-        env:                 
-        - name: OSFX_AUTH_DATASOURCE_USER
-          valueFrom:          
-            secretKeyRef:
-              name: osfx-auth-secret
-              key: username
-        - name: OSFX_AUTH_DATASOURCE_PASS
-          valueFrom:
-            secretKeyRef:
-              name: osfx-auth-secret
-              key: password
-        - name: OSFX_AUTH_DATASOURCE_URL 
-          valueFrom:
-            secretKeyRef:
-              name: osfx-auth-secret
-              key: dbconurl
-        - name: OSFX_MQ_ADDRESS
-          valueFrom:
-            secretKeyRef:
-              name: osfx-auth-secret
-              key: mqaddress
+        - name: osfx-auth
+          image: osfxdocks/osfx-auth:0.3.5
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5020
+              name: server
+          env:
+            - name: OSFX_AUTH_DATASOURCE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-auth-secret
+                  key: username
+            - name: OSFX_AUTH_DATASOURCE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-auth-secret
+                  key: password
+            - name: OSFX_AUTH_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-auth-secret
+                  key: dbconurl
+            - name: OSFX_MQ_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: osfx-auth-secret
+                  key: mqaddress
 ---
 apiVersion: v1
 kind: Service
@@ -48,9 +48,9 @@ metadata:
   name: osfx-auth
 spec:
   ports:
-  - port: 5020
-    targetPort: 5020
-    name: http
+    - port: 5020
+      targetPort: 5020
+      name: http
   selector:
     app: osfx-auth
   type: ClusterIP
