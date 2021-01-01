@@ -4,7 +4,7 @@ apiVersion: v1
 metadata:
   name: osfx-page
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: osfx-page
   ports:
