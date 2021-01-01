@@ -1,5 +1,7 @@
 CLUSTER-PERMISSIONS=--clusterrole=cluster-admin  --user=admin  --user=kubelet
 CLUSTER-GROUP= --group=system:serviceaccounts
+CUSTOM-HOUSEKEEP-FLG = -n
+CUSTOM-HOUSEKEEP-NS = kube-system
 install-multipass:
 	snap install multipass
 
@@ -47,3 +49,17 @@ spin-kubernetes:
 	exit
 cluster-ip:
 	kubectl get service --namespace kube-system kube-dns -o jsonpath="{.spec.clusterIP}"
+housekeeping:
+	kubectl get pod -n osfx | grep Evicted | awk '{print $1}' | xargs kubectl delete pod -n osfx
+	kubectl get pod -n osfx | grep CrashLoopBackOff | awk '{print $1}' | xargs kubectl delete pod -n osfx
+	kubectl get pod -n osfx | grep ImagePullBackBackOff | awk '{print $1}' | xargs kubectl delete pod -n osfx
+	kubectl get pod -n osfx | grep Terminating | awk '{print $1}' | xargs kubectl delete pod -n osfx
+	kubectl get pod -n osfx | grep Pending | awk '{print $1}' | xargs kubectl delete pod -n osfx
+	kubectl get pod -n osfx | grep ContainerCreating | awk '{print $1}' | xargs kubectl delete pod -n osfx
+custom-housekeeping:
+	kubectl get pod ${CUSTOM-HOUSEKEEP-FLG} ${CUSTOM-HOUSEKEEP-NS} | grep Evicted | awk '{print $1}' | xargs kubectl delete pod ${CUSTOM-HOUSEKEEP-FLG} ${CUSTOM-HOUSEKEEP-NS}
+	kubectl get pod ${CUSTOM-HOUSEKEEP-FLG} ${CUSTOM-HOUSEKEEP-NS} | grep CrashLoopBackOff | awk '{print $1}' | xargs kubectl delete pod ${CUSTOM-HOUSEKEEP-FLG} ${CUSTOM-HOUSEKEEP-NS}
+	kubectl get pod ${CUSTOM-HOUSEKEEP-FLG} ${CUSTOM-HOUSEKEEP-NS} | grep ImagePullBackBackOff | awk '{print $1}' | xargs kubectl delete pod ${CUSTOM-HOUSEKEEP-FLG} ${CUSTOM-HOUSEKEEP-NS}
+	kubectl get pod ${CUSTOM-HOUSEKEEP-FLG} ${CUSTOM-HOUSEKEEP-NS} | grep Terminating | awk '{print $1}' | xargs kubectl delete pod ${CUSTOM-HOUSEKEEP-FLG} ${CUSTOM-HOUSEKEEP-NS}
+	kubectl get pod ${CUSTOM-HOUSEKEEP-FLG} ${CUSTOM-HOUSEKEEP-NS} | grep Pending | awk '{print $1}' | xargs kubectl delete pod ${CUSTOM-HOUSEKEEP-FLG} ${CUSTOM-HOUSEKEEP-NS}
+	kubectl get pod ${CUSTOM-HOUSEKEEP-FLG} ${CUSTOM-HOUSEKEEP-NS} | grep ContainerCreating | awk '{print $1}' | xargs kubectl delete pod ${CUSTOM-HOUSEKEEP-FLG} ${CUSTOM-HOUSEKEEP-NS}

@@ -8,7 +8,7 @@ metadata:
   namespace: osfx
 spec:
   rules:
-    - host: app.osfx
+    - host: dashboard.osfx.staging
       http:
         paths:
           - backend:
@@ -24,7 +24,7 @@ metadata:
   namespace: osfx
 spec:
   rules:
-    - host: iso.app.osfx
+    - host: iso.osfx.staging
       http:
         paths:
           - backend:
@@ -40,7 +40,7 @@ metadata:
   namespace: osfx
 spec:
   rules:
-    - host: auth.app.osfx
+    - host: auth.osfx.staging
       http:
         paths:
           - backend:
@@ -56,7 +56,7 @@ metadata:
   namespace: osfx
 spec:
   rules:
-    - host: user.app.osfx
+    - host: user.osfx.staging
       http:
         paths:
           - backend:
@@ -72,7 +72,7 @@ metadata:
   namespace: osfx
 spec:
   rules:
-    - host: data.app.osfx
+    - host: data.osfx.staging
       http:
         paths:
           - backend:
@@ -88,7 +88,7 @@ metadata:
   namespace: osfx
 spec:
   rules:
-    - host: card.app.osfx
+    - host: card.osfx.staging
       http:
         paths:
           - backend:
