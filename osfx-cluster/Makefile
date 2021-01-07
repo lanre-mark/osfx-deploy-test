@@ -18,9 +18,8 @@ add-permission:
 nameserver-ip:
 	grep "nameserver" /run/systemd/resolve/resolv.conf | awk '{print $$2}'
 	
-configure-cluster: 
+configure-cluster: configure-network configure-state
 	echo "osfx - configuring cluster..."
-	configure-network configure-state
 
 configure-network:
 	echo "osfx - configuring cluster infrastructure ..."
