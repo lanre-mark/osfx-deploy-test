@@ -19,7 +19,7 @@ nameserver-ip:
 	grep "nameserver" /run/systemd/resolve/resolv.conf | awk '{print $$2}'
 	
 configure-cluster: configure-network configure-state
-	echo "osfx - configuring cluster..."
+	echo "osfx - ...configured cluster..."
 
 configure-network:
 	echo "osfx - configuring cluster infrastructure ..."
@@ -30,7 +30,7 @@ configure-network:
 configure-state:
 	echo "osfx - configuring state for high performance..."
 	mkdir -p /home/ubuntu/osfx/run /home/ubuntu/osfx/lib
-	cat EOF /var/snap/microk8s/current/args/containerd <<
+	cat /var/snap/microk8s/current/args/containerd <<EOF
 	--config ${SNAP_DATA}/args/containerd.toml
 	--root /home/ubuntu/osfx/lib/containerd
 	--state /home/ubuntu/osfx/run/containerd
