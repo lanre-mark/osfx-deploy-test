@@ -29,7 +29,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
         - name: nginx
-          image: osfxdocks/osfx-page:0.3.0
+          image: osfxdocks/osfx-page:0.3.1
           ports:
             - containerPort: 80
               protocol: TCP
