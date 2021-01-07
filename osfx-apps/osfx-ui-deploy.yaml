@@ -1,17 +1,16 @@
 ---
-kind: Service
 apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: osfx-page
-spec:
-  type: ClusterIP
-  selector:
-    app: osfx-page
-  ports:
-    - name: http
-      protocol: TCP
-      port: 80
-      targetPort: 80
+  name: osfx-page-config
+  namespace: osfx
+data:
+  config.js: |
+    window.REACT_APP_OSFX_AUTH='https://10.161.47.217/auth'
+    window.REACT_APP_OSFX_USER='https://10.161.47.217/user'
+    window.REACT_APP_OSFX_AUTO='https://10.161.47.217/auto'
+    window.REACT_APP_OSFX_DATA='https://10.161.47.217/data'
+    window.REACT_APP_OSFX_CARD='https://10.161.47.217/card'
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -27,21 +26,33 @@ spec:
       labels:
         app: osfx-page
     spec:
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: k8s-app
-                    operator: In
-                    values:
-                      - osfx-page
-              topologyKey: 'kubernetes.io/hostname'
+      terminationGracePeriodSeconds: 60
       containers:
         - name: nginx
-          image: osfxdocks/osfx-page:0.2.4
+          image: osfxdocks/osfx-page:0.3.0
           ports:
             - containerPort: 80
               protocol: TCP
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: osfx-page-config-volume
+              mountPath: /usr/share/nginx/html/config.js
+              subPath: config.js
+              readOnly: true
+      volumes:
+        - name: osfx-page-config-volume
+          configMap:
+            name: osfx-page-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: osfx-page
+spec:
+  type: ClusterIP
+  selector:
+    app: osfx-page
+  ports:
+    - port: 5000
+      targetPort: 80
+      name: http

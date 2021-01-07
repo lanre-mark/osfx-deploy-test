@@ -3,91 +3,85 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
-    kubernetes.io/ingress.class: nginx
-  name: dash-ingress
+    kubernetes.io/ingress.class: 'nginx'
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+  name: osfx-ingress
   namespace: osfx
 spec:
   rules:
+    - http:
+        paths:
+          - path: /(.+)
+            backend:
+              serviceName: osfx-page
+              servicePort: 5000
+    - http:
+        paths:
+          - path: /tmc/(.+)
+            backend:
+              serviceName: osfx-tmc
+              servicePort: 5010
+    - http:
+        paths:
+          - path: /auto/(.+)
+            backend:
+              serviceName: osfx-auto
+              servicePort: 5011
+    - http:
+        paths:
+          - path: /auth/(.+)
+            backend:
+              serviceName: osfx-auth
+              servicePort: 5020
+    - http:
+        paths:
+          - path: /user/(.+)
+            backend:
+              serviceName: osfx-user
+              servicePort: 5021
+    - http:
+        paths:
+          - path: /data/(.+)
+            backend:
+              serviceName: osfx-data
+              servicePort: 5030
+    - http:
+        paths:
+          - path: /card/(.+)
+            backend:
+              serviceName: osfx-card
+              servicePort: 5040
+
     - host: dashboard.osfx.staging
       http:
         paths:
           - backend:
               serviceName: osfx-page
-              servicePort: 80
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-  name: tmc-ingress
-  namespace: osfx
-spec:
-  rules:
+              servicePort: 5000
     - host: iso.osfx.staging
       http:
         paths:
           - backend:
               serviceName: osfx-tmc
               servicePort: 5010
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-  name: auth-ingress
-  namespace: osfx
-spec:
-  rules:
     - host: auth.osfx.staging
       http:
         paths:
           - backend:
               serviceName: osfx-auth
               servicePort: 5020
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: 'nginx'
-  name: user-ingress
-  namespace: osfx
-spec:
-  rules:
     - host: user.osfx.staging
       http:
         paths:
           - backend:
               serviceName: osfx-user
               servicePort: 5021
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: 'nginx'
-  name: data-ingress
-  namespace: osfx
-spec:
-  rules:
     - host: data.osfx.staging
       http:
         paths:
           - backend:
               serviceName: osfx-data
               servicePort: 5030
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: 'nginx'
-  name: card-ingress
-  namespace: osfx
-spec:
-  rules:
     - host: card.osfx.staging
       http:
         paths:

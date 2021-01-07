@@ -6,6 +6,12 @@ SECRET-YAML = -o yaml --dry-run=client >
 SECRET-CMD=create secret generic -n osfx
 FIELD=--from-literal
 
+
+ENDPOINT_FILTERS=grep -v tmc | grep -v hsm | grep -v mysql |grep -v finacle |grep -v flexcube | grep -v tmc | grep -v mq
+
+show-endpoints:
+	kubectl -n osfx get svc -o wide | ${ENDPOINT_FILTERS} | awk '{print "- name: REACT_APP_"toupper($$1)"\n  value: http://"$$3":"$$5}' | awk '{gsub(/\/TCP/,"")}1' | awk '{gsub(/\-/, "_")}1' | awk '{gsub(/_ name/,"- name")}1'
+
 deploy-all: deploy-mq deploy-hsm deploy-db deploy-bank deploy-apps
 	kubectl  ${FLAGS} ${CONTEXT} ${ACTION} ${FILE} osfx-domains.yaml
 
