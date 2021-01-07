@@ -23,13 +23,13 @@ configure-cluster:
 	configure-network configure-state
 
 configure-network:
-        echo "osfx - configuring cluster infrastructure ..."
+	echo "osfx - configuring cluster infrastructure ..."
 	microk8s enable istio metallb storage
 	kubectl apply -f ../yaml/0_osfx_mandatory.yaml 
 	microk8s enable dns ingress dashboard
 
 configure-state:
-        echo "osfx - configuring state for high performance..."
+	echo "osfx - configuring state for high performance..."
 	mkdir -p /home/ubuntu/osfx/run /home/ubuntu/osfx/lib
 	cat EOF /var/snap/microk8s/current/args/containerd <<
 	--config ${SNAP_DATA}/args/containerd.toml
