@@ -31,11 +31,11 @@ configure-network:
 
 configure-state:
 	echo "osfx - configuring state for high performance..."
-	mkdir -p /home/ubuntu/osfx/run /home/ubuntu/osfx/lib
+	mkdir -p /home/$USER/osfx/run /home/$USER/osfx/lib
 	#cat EOF /var/snap/microk8s/current/args/containerd <<
 	#--config ${SNAP_DATA}/args/containerd.toml
-	#--root /home/ubuntu/osfx/lib/containerd
-	#--state /home/ubuntu/osfx/run/containerd
+	#--root /home/$USER/osfx/lib/containerd
+	#--state /home/$USER/osfx/run/containerd
 	#--address ${SNAP_COMMON}/run/containerd.sock
 	#sudo microk8s stop
 	#sudo microk8s start
