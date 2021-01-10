@@ -42,7 +42,13 @@ configure-state:
 	#EOF
 	echo "osfx - configuring state completed."
 
-
+reset-config:
+	kube=$$HOME/.kube
+	sudo rm -rf $$kube
+	mkdir $$kube
+	sudo microk8s kubectl config view --raw > $$kube/config
+	sudo chmod 777 ~/.kube/config
+	
 patch-dns:
 	kubectl ${KUBE-CONTEXT} patch deployment coredns ${DNS-VOLUME-CONFIG}
 	echo "--resolv-conf=/run/systemd/resolve/resolv.conf" >> /var/snap/microk8s/current/args/kubelet
