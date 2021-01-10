@@ -20,9 +20,8 @@ add-permission:
 nameserver-ip:
 	grep "nameserver" /run/systemd/resolve/resolv.conf | awk '{print $$2}'
 	
-configure-cluster: 
+configure-cluster: configure-network configure-state
 	echo "osfx - configuring cluster..."
-	configure-network configure-state
 
 configure-network:
 	echo "osfx - configuring cluster infrastructure ..."
@@ -78,8 +77,8 @@ create-jobs:
 spin-kubernetes:
 	sudo snap install microk8s --classic --channel=1.19/stable
 	sudo snap alias microk8s.kubectl kubectl
-	sudo usermod -a -G microk8s ubuntu
-	sudo chown -f -R ubuntu ~/.kube
+	sudo usermod -a -G microk8s $USER
+	sudo chown -f -R $USER ~/.kube
 	exit
 
 cluster-ip:
