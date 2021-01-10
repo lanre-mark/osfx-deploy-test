@@ -2,6 +2,7 @@ CLUSTER-PERMISSIONS=--clusterrole=cluster-admin  --user=admin  --user=kubelet
 CLUSTER-GROUP= --group=system:serviceaccounts
 KUBE-CONTEXT= -n kube-system
 DNS-VOLUME-CONFIG= -p "{\"spec\": {\"template\": {\"spec\": {\"volumes\": [{\"configMap\": {\"items\": [{\"key\": \"Corefile\",\"path\": \"Corefile\"},{\"key\": \"osfx.db\",\"path\": \"osfx.db\"}],\"name\": \"coredns\"},\"name\": \"config-volume\"}]}}}}}"
+
 install-multipass:
 	snap install multipass
 
@@ -12,33 +13,35 @@ create-cluster: install-tools spin-kubernetes
 	
 add-node: 
 	microk8s add-node
+
 add-permission:
 	kubectl create clusterrolebinding permissive-binding ${CLUSTER-PERMISSIONS} ${CLUSTER-GROUP}
 
 nameserver-ip:
 	grep "nameserver" /run/systemd/resolve/resolv.conf | awk '{print $$2}'
 	
-configure-cluster: configure-network configure-state
-	echo "osfx - ...configured cluster..."
+configure-cluster: 
+	echo "osfx - configuring cluster..."
+	configure-network configure-state
 
 configure-network:
-	echo "osfx - configuring cluster infrastructure ..."
-	microk8s enable istio metallb storage
+  echo "osfx - configuring cluster infrastructure ..."
+  microk8s enable istio metallb storage
 	kubectl apply -f ../yaml/0_osfx_mandatory.yaml 
 	microk8s enable dns ingress dashboard
 
 configure-state:
-	echo "osfx - configuring state for high performance..."
+  echo "osfx - configuring state for high performance..."
 	mkdir -p /home/ubuntu/osfx/run /home/ubuntu/osfx/lib
-	cat /var/snap/microk8s/current/args/containerd<<EOF
-	--config ${SNAP_DATA}/args/containerd.toml
-	--root /home/ubuntu/osfx/lib/containerd
-	--state /home/ubuntu/osfx/run/containerd
-	--address ${SNAP_COMMON}/run/containerd.sock
-	EOF
+	#cat EOF /var/snap/microk8s/current/args/containerd <<
+	#--config ${SNAP_DATA}/args/containerd.toml
+	#--root /home/ubuntu/osfx/lib/containerd
+	#--state /home/ubuntu/osfx/run/containerd
+	#--address ${SNAP_COMMON}/run/containerd.sock
+	#sudo microk8s stop
+	#sudo microk8s start
+	#EOF
 	echo "osfx - configuring state completed."
-	sudo microk8s stop
-	sudo microk8s start
 
 
 patch-dns:
@@ -55,6 +58,7 @@ restart-dns:
 	kubectl get pods ${KUBE-CONTEXT} | grep dns | awk '{print $$1}' | xargs kubectl delete pod ${KUBE-CONTEXT}
 
 create-nodes: create-main create-node create-work
+
 create-main: install-multipass
 	multipass launch -m 16G -n osfx-main -d 100G -c 2
 	multipass shell osfx-main
@@ -77,9 +81,12 @@ spin-kubernetes:
 	sudo usermod -a -G microk8s ubuntu
 	sudo chown -f -R ubuntu ~/.kube
 	exit
+
 cluster-ip:
 	kubectl get service --namespace kube-system kube-dns -o jsonpath="{.spec.clusterIP}"
+
 clean-pods:  clean-osfx-pods clean-kube-pods 
+
 clean-osfx-pods:
 	kubectl get pod -n osfx | grep Evicted | awk '{print $$1}' | xargs kubectl delete pod -n osfx
 	kubectl get pod -n osfx | grep CrashLoopBackOff | awk '{print $$1}' | xargs kubectl delete pod -n osfx
